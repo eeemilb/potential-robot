@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Светлана Сорокина - Профессиональная сварка металлоконструкций</title>
+    <style>
+        /* Design System Variables */
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-black: rgba(0, 0, 0, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-gray-400: rgba(119, 124, 124, 1);
+
+            /* Custom Industrial Colors */
+            --bg-primary: #0d1117;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #161b22;
+            --accent-gold: #FFD700;
+            --accent-blue: #00D4FF;
+            --accent-orange: #FF4500;
+            --text-primary: #F0F0F0;
+            --text-secondary: #A0A0A0;
+            --border-color: rgba(255, 215, 0, 0.2);
+
+            --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-size-sm: 14px;
+            --font-size-base: 16px;
+            --font-size-lg: 18px;
+            --font-size-xl: 24px;
+            --font-size-2xl: 32px;
+            --font-size-3xl: 48px;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 550;
+            --font-weight-bold: 600;
+
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-24: 24px;
+            --space-32: 32px;
+            --space-48: 48px;
+            --space-64: 64px;
+
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+
+            --duration-fast: 150ms;
+            --duration-normal: 250ms;
+            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @font-face {
+            font-family: 'FKGroteskNeue';
+            src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spark {
+            0%, 100% { opacity: 0; transform: translate(0, 0) scale(0); }
+            50% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.1); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.5), 0 0 80px rgba(255, 215, 0, 0.2); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes weldArc {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes rotateIn {
+            from {
+                opacity: 0;
+                transform: rotate(-180deg) scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: var(--font-size-base);
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Sparks Background */
+        .sparks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-gold);
+            opacity: 0;
+            animation: spark 3s ease-in-out infinite;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            transition: all var(--duration-normal) var(--ease-standard);
+        }
+
+        .header.scrolled {
+            background: rgba(13, 17, 23, 0.98);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: var(--space-16) var(--space-24);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            text-decoration: none;
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--text-primary);
+            transition: all var(--duration-fast) var(--ease-standard);
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            filter: drop-shadow(0 0 10px var(--accent-gold));
+        }
+
+        .logo:hover {
+            color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        .nav {
+            display: flex;
+            gap: var(--space-32);
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: var(--font-weight-medium);
+            transition: all var(--duration-fast) var(--ease-standard);
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .nav a:hover {
+            color: var(--accent-gold);
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: width var(--duration-normal) var(--ease-standard);
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px var(--space-24) 100px;
+            max-width: 1280px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .hero-title {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            line-height: 1.2;
+            margin-bottom: var(--space-24);
+            background: linear-gradient(135deg, #ffffff 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-48);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.6s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: var(--space-16);
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.9s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: var(--space-16) var(--space-32);
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-standard);
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #FFA500;
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            animation: glow 2s ease infinite;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--accent-gold);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Section */
+        .section {
+            padding: 80px var(--space-24);
+            max-width: 1280px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            text-align: center;
+            margin-bottom: var(--space-16);
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-64);
+            font-size: var(--font-size-lg);
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-32);
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            padding: var(--space-32);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s var(--ease-standard);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .service-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+            animation: weldArc 2s ease infinite;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .service-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-24);
+            filter: drop-shadow(0 0 10px var(--accent-gold));
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+            animation: pulse 1s ease infinite;
+        }
+
+        .service-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-12);
+            color: var(--text-primary);
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Portfolio Gallery */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-32);
+        }
+
+        .portfolio-item {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s var(--ease-standard);
+            cursor: pointer;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .portfolio-item.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            border-color: var(--accent-gold);
+        }
+
+        .portfolio-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.5s var(--ease-standard);
+        }
+
+        .portfolio-item:hover .portfolio-image {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+
+        .portfolio-content {
+            padding: var(--space-24);
+        }
+
+        .portfolio-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-8);
+            color: var(--text-primary);
+        }
+
+        .portfolio-description {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-32);
+            margin-top: var(--space-48);
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .process-step.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .process-number {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin: 0 auto var(--space-16);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .process-step:hover .process-number {
+            transform: scale(1.15) rotate(360deg);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            animation: glow 2s ease infinite;
+        }
+
+        .process-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-8);
+            color: var(--accent-gold);
+        }
+
+        .process-description {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-48);
+            text-align: center;
+        }
+
+        .stat-item {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-number {
+            font-size: 56px;
+            font-weight: var(--font-weight-bold);
+            color: var(--accent-gold);
+            margin-bottom: var(--space-8);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-base);
+        }
+
+        /* Tech Section */
+        .tech-section {
+            background: var(--bg-secondary);
+            padding: 80px var(--space-24);
+            margin-top: 80px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .tech-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .tech-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-16);
+            justify-content: center;
+            margin-top: var(--space-32);
+        }
+
+        .tech-badge {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-blue);
+            padding: var(--space-12) var(--space-24);
+            border-radius: 50px;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            border: 1px solid var(--accent-blue);
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            text-align: center;
+        }
+
+        .contact-buttons {
+            display: flex;
+            gap: var(--space-24);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: var(--space-48);
+        }
+
+        .contact-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            padding: var(--space-24) var(--space-48);
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            border-color: var(--accent-gold);
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .contact-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px var(--accent-gold));
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: var(--space-48) var(--space-24);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 80px;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            animation: glow 2s ease infinite;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 36px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            color: var(--accent-gold);
+            transform: rotate(90deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: var(--font-size-base);
+            }
+
+            .section {
+                padding: 60px var(--space-16);
+            }
+
+            .section-title {
+                font-size: var(--font-size-xl);
+            }
+
+            .services-grid,
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-buttons {
+                flex-direction: column;
+            }
+
+            .contact-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sparks Background -->
+    <div class="sparks-container" id="sparksContainer"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">⚡</span>
+                <span>Светлана Сорокина</span>
+            </a>
+            <nav class="nav">
+                <a href="#services">Услуги</a>
+                <a href="#portfolio">Работы</a>
+                <a href="#process">Процесс</a>
+                <a href="#contact">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop">↑</button>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">Профессиональная сварка - качество, которое держит</h1>
+        <p class="hero-subtitle">Создаю надёжные металлические конструкции: заборы, ворота, металлоконструкции</p>
+        <div class="hero-buttons">
+            <a href="#contact" class="btn btn-primary">Заказать консультацию</a>
+            <a href="#portfolio" class="btn btn-secondary">Посмотреть работы</a>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section">
+        <div class="stats-grid">
+            <div class="stat-item" data-target="100">
+                <div class="stat-number">0+</div>
+                <div class="stat-label">Довольных клиентов</div>
+            </div>
+            <div class="stat-item" data-target="10">
+                <div class="stat-number">0+</div>
+                <div class="stat-label">Лет опыта</div>
+            </div>
+            <div class="stat-item" data-target="500">
+                <div class="stat-number">0+</div>
+                <div class="stat-label">Завершённых проектов</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section" id="services">
+        <h2 class="section-title">Мои услуги</h2>
+        <p class="section-subtitle">Полный спектр сварочных работ любой сложности</p>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🔗</div>
+                <h3 class="service-title">Установка заборов и ворот</h3>
+                <p class="service-description">Создаю надёжные и красивые металлические заборы и ворота под любые требования</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🏗️</div>
+                <h3 class="service-title">Металлоконструкции</h3>
+                <p class="service-description">Промышленные конструкции, перила, лестницы, нестандартные заказы</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <h3 class="service-title">Ремонт и восстановление</h3>
+                <p class="service-description">Профессиональный ремонт существующих конструкций и восстановление повреждённых изделий</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🎨</div>
+                <h3 class="service-title">Художественная сварка</h3>
+                <p class="service-description">Декоративные металлические изделия, уникальные дизайнерские решения</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section class="section" id="portfolio">
+        <h2 class="section-title">Мои работы</h2>
+        <p class="section-subtitle">Примеры качественных сварных швов и готовых проектов</p>
+        <div class="portfolio-grid">
+            <div class="portfolio-item" data-image="https://pplx-res.cloudinary.com/image/upload/v1762771547/pplx_project_search_images/8a22b6badd07ec0a409e2064d2e0e339d79f6983.png">
+                <img src="https://pplx-res.cloudinary.com/image/upload/v1762771547/pplx_project_search_images/8a22b6badd07ec0a409e2064d2e0e339d79f6983.png" alt="Профессиональный сварной шов" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">Профессиональный сварной шов</h3>
+                    <p class="portfolio-description">Качественная сварка с идеальной геометрией и прочностью</p>
+                </div>
+            </div>
+            <div class="portfolio-item" data-image="https://pplx-res.cloudinary.com/image/upload/v1762771546/pplx_project_search_images/d0d67db0163da3133d75f6f676aa63b387076abc.png">
+                <img src="https://pplx-res.cloudinary.com/image/upload/v1762771546/pplx_project_search_images/d0d67db0163da3133d75f6f676aa63b387076abc.png" alt="Металлический забор" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">Металлический забор</h3>
+                    <p class="portfolio-description">Прочный и красивый сварной забор для приватного участка</p>
+                </div>
+            </div>
+            <div class="portfolio-item" data-image="https://pplx-res.cloudinary.com/image/upload/v1762771546/pplx_project_search_images/2cc734cf082336d5b5bf7bc22bf7e552ee9d3f77.png">
+                <img src="https://pplx-res.cloudinary.com/image/upload/v1762771546/pplx_project_search_images/2cc734cf082336d5b5bf7bc22bf7e552ee9d3f77.png" alt="Декоративные ворота" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">Декоративные ворота</h3>
+                    <p class="portfolio-description">Уникальные ворота с художественными элементами</p>
+                </div>
+            </div>
+            <div class="portfolio-item" data-image="https://pplx-res.cloudinary.com/image/upload/v1762366496/pplx_project_search_images/9dc0a04fda8b93f0bb4d2abcb00cc7588cf32722.png">
+                <img src="https://pplx-res.cloudinary.com/image/upload/v1762366496/pplx_project_search_images/9dc0a04fda8b93f0bb4d2abcb00cc7588cf32722.png" alt="Идеальный сварной стык" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">Идеальный сварной стык</h3>
+                    <p class="portfolio-description">Чистая и аккуратная сварка металлических деталей</p>
+                </div>
+            </div>
+            <div class="portfolio-item" data-image="https://pplx-res.cloudinary.com/image/upload/v1762771546/pplx_project_search_images/3a042f9461110946bfe9383a6e99a894eee00ac9.png">
+                <img src="https://pplx-res.cloudinary.com/image/upload/v1762771546/pplx_project_search_images/3a042f9461110946bfe9383a6e99a894eee00ac9.png" alt="Сетчатый забор" class="portfolio-image">
+                <div class="portfolio-content">
+                    <h3 class="portfolio-title">Сетчатый забор</h3>
+                    <p class="portfolio-description">Надежная сварная конструкция из металлической сетки</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="section" id="process">
+        <h2 class="section-title">Как я работаю</h2>
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="process-number">1</div>
+                <div class="process-title">Консультация</div>
+                <div class="process-description">Обсуждаем ваши требования и видение проекта</div>
+            </div>
+            <div class="process-step">
+                <div class="process-number">2</div>
+                <div class="process-title">Дизайн</div>
+                <div class="process-description">Разрабатываю чертежи и 3D-модели конструкции</div>
+            </div>
+            <div class="process-step">
+                <div class="process-number">3</div>
+                <div class="process-title">Подготовка</div>
+                <div class="process-description">Подбираю материалы и подготавливаю оборудование</div>
+            </div>
+            <div class="process-step">
+                <div class="process-number">4</div>
+                <div class="process-title">Сварка</div>
+                <div class="process-description">Выполняю профессиональную сварку с высоким качеством</div>
+            </div>
+            <div class="process-step">
+                <div class="process-number">5</div>
+                <div class="process-title">Финиш</div>
+                <div class="process-description">Финальная обработка, покраска и качественный контроль</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Section -->
+    <section class="tech-section">
+        <div class="tech-content">
+            <h2 class="section-title">Помимо сварки...</h2>
+            <p class="section-subtitle">Я также технический специалист с широкими компетенциями</p>
+            <div class="tech-skills">
+                <div class="tech-badge">Chat Bots Development</div>
+                <div class="tech-badge">GetCourse Integration</div>
+                <div class="tech-badge">Online School Creation</div>
+                <div class="tech-badge">Website Design &amp; Development</div>
+                <div class="tech-badge">Turnkey Solutions</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section contact-section" id="contact">
+        <h2 class="section-title">Свяжитесь со мной</h2>
+        <p class="section-subtitle">Готова обсудить ваш проект и предложить лучшее решение</p>
+        <div class="contact-buttons">
+            <a href="https://t.me/tehno_panda" target="_blank" class="contact-btn">
+                <span class="contact-icon">📱</span>
+                <div>
+                    <div>Telegram</div>
+                    <div style="font-size: 14px; color: var(--text-secondary);">@tehno_panda</div>
+                </div>
+            </a>
+            <a href="tel:+79178724673" class="contact-btn">
+                <span class="contact-icon">📞</span>
+                <div>
+                    <div>Телефон</div>
+                    <div style="font-size: 14px; color: var(--text-secondary);">+7 917 872-46-73</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">© 2025 Светлана Сорокина. Профессиональная сварка металлоконструкций.</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightboxClose">×</button>
+            <img src="" alt="" class="lightbox-image" id="lightboxImage">
+        </div>
+    </div>
+
+    <script>
+        // Generate sparks
+        function createSparks() {
+            const container = document.getElementById('sparksContainer');
+            const sparkCount = 30;
+            
+            for (let i = 0; i < sparkCount; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = Math.random() * 100 + '%';
+                spark.style.top = Math.random() * 100 + '%';
+                spark.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+                spark.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
+                spark.style.animationDelay = Math.random() * 3 + 's';
+                spark.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(spark);
+            }
+        }
+
+        createSparks();
+
+        // Header scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe service cards with stagger
+        document.querySelectorAll('.service-card').forEach(function(card, index) {
+            card.style.transitionDelay = (index * 0.1) + 's';
+            observer.observe(card);
+        });
+
+        // Observe portfolio items with stagger
+        document.querySelectorAll('.portfolio-item').forEach(function(item, index) {
+            item.style.transitionDelay = (index * 0.15) + 's';
+            observer.observe(item);
+        });
+
+        // Observe process steps with stagger
+        document.querySelectorAll('.process-step').forEach(function(step, index) {
+            step.style.transitionDelay = (index * 0.1) + 's';
+            observer.observe(step);
+        });
+
+        // Stats counter animation
+        const statItems = document.querySelectorAll('.stat-item');
+        let statsAnimated = false;
+
+        function animateStats() {
+            if (statsAnimated) return;
+            statsAnimated = true;
+
+            statItems.forEach(function(item, index) {
+                setTimeout(function() {
+                    item.classList.add('visible');
+                    const target = parseInt(item.getAttribute('data-target'));
+                    const numberElement = item.querySelector('.stat-number');
+                    let current = 0;
+                    const increment = target / 50;
+                    const timer = setInterval(function() {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        numberElement.textContent = Math.floor(current) + '+';
+                    }, 30);
+                }, index * 200);
+            });
+        }
+
+        const statsObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    animateStats();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        if (statItems.length > 0) {
+            statsObserver.observe(statItems[0].parentElement);
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Portfolio lightbox
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        document.querySelectorAll('.portfolio-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                const imageSrc = this.getAttribute('data-image');
+                const imageAlt = this.querySelector('.portfolio-title').textContent;
+                lightboxImage.src = imageSrc;
+                lightboxImage.alt = imageAlt;
+                lightbox.classList.add('active');
+            });
+        });
+
+        lightboxClose.addEventListener('click', function() {
+            lightbox.classList.remove('active');
+        });
+
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+            }
+        });
+
+        // Add spark effects on service card hover
+        document.querySelectorAll('.service-card').forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                const rect = card.getBoundingClientRect();
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(function() {
+                        const spark = document.createElement('div');
+                        spark.style.position = 'absolute';
+                        spark.style.width = '4px';
+                        spark.style.height = '4px';
+                        spark.style.background = '#FFD700';
+                        spark.style.borderRadius = '50%';
+                        spark.style.boxShadow = '0 0 10px #FFD700';
+                        spark.style.left = Math.random() * 100 + '%';
+                        spark.style.top = Math.random() * 100 + '%';
+                        spark.style.pointerEvents = 'none';
+                        spark.style.zIndex = '10';
+                        spark.style.opacity = '1';
+                        spark.style.transition = 'all 0.5s ease';
+                        card.appendChild(spark);
+                        
+                        setTimeout(function() {
+                            spark.style.opacity = '0';
+                            spark.style.transform = 'translateY(-50px)';
+                        }, 10);
+                        
+                        setTimeout(function() {
+                            spark.remove();
+                        }, 600);
+                    }, i * 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
